@@ -23,7 +23,10 @@ void setup ()
             buttons[a][b]=new MSButton(a,b);
         }
     }
-    setBombs();
+    for(int c=0;c<((int)(Math.random()*10))+NUM_COLS;c++)
+    {
+        setBombs();
+    }
 }
 public void setBombs()
 {   
@@ -116,7 +119,20 @@ public class MSButton
     public int countBombs(int row, int col)
     {
         int numBombs = 0;
-        
+        for(int a =-1;a<=1;a++)
+        {
+            for(int b=-1;b<=1;b++)
+            {
+                if(bombs.contains(buttons[row+a][col+b]) && isValid(row,col))
+                {
+                    numBombs++;
+                }
+            }
+        }
+        if(bombs.contains(buttons[row][col]))
+        {
+            numBombs--;
+        }
         return numBombs;
     }
 }
