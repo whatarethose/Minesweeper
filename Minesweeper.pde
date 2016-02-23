@@ -90,6 +90,32 @@ public class MSButton
     public void mousePressed () 
     {
         clicked = true;
+        if(mouseButton == RIGHT)
+        {
+            marked = !marked;
+        }
+        else if(bombs.contains(this))
+        {
+            displayLosingMessage();
+        }
+        else if(countBombs(r,c)>0)
+        {
+            setLabel(str(countBombs(r,c)));
+        }
+        else
+        {
+           for(int row =-1;row <=1;row++)
+           {
+                for(int col = -1; col<=1;col++)
+                {
+                     if(isValid(r+row,c+col)&& buttons[r+row][c+col].isClicked() == false)
+                    {
+                        if(!(row==0&&col ==0))
+                        buttons[r+row][c+col].mousePressed();
+                    }
+                }   
+           } 
+        }
         //your code here
     }
 
