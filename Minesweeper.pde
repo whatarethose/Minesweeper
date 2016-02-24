@@ -2,8 +2,8 @@
 
 import de.bezier.guido.*;
 //Declare and initialize NUM_ROWS and NUM_COLS = 20
-private final static int  NUM_ROWS = 5;
-private final static int  NUM_COLS = 5;
+private final static int  NUM_ROWS = 10;
+private final static int  NUM_COLS = 10;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> bombs= new ArrayList <MSButton>(); //ArrayList of just the minesweeper buttons that are mined
 void setup ()
@@ -30,8 +30,8 @@ void setup ()
 }
 public void setBombs()
 {   
-    int randomRow = (int)(Math.random()*5);
-    int randomColumn = (int)(Math.random()*5);
+    int randomRow = (int)(Math.random()*NUM_ROWS);
+    int randomColumn = (int)(Math.random()*NUM_COLS);
     if(!bombs.contains(buttons[randomRow][randomColumn]))
     {
         bombs.add(buttons[randomRow][randomColumn]);
@@ -41,13 +41,20 @@ public void setBombs()
 public void draw ()
 {
     background( 0 );
+    System.out.println(isWon());
     if(isWon())
         displayWinningMessage();
 }
 public boolean isWon()
 {
-    //your code here
-    return false;
+    for(int i = 0; i < bombs.size();i++)
+    {
+        if(bombs.get(i).isMarked()==false)
+        {
+            return false;
+        }
+    }
+    return true;
 }
 public void displayLosingMessage()
 {
@@ -104,7 +111,7 @@ public class MSButton
         }
         else
         {
-           for(int row =-1;row <=1;row++)
+            for(int row =-1;row <=1;row++)
            {
                 for(int col = -1; col<=1;col++)
                 {
@@ -114,7 +121,7 @@ public class MSButton
                         buttons[r+row][c+col].mousePressed();
                     }
                 }   
-           } 
+           }
         }
         //your code here
     }
@@ -140,7 +147,7 @@ public class MSButton
     }
     public boolean isValid(int r, int c)
     {
-        return (r>=0 && r<NUM_ROWS) && (c>=0 && c<NUM_COLS);
+        return ((r>=0 && r<NUM_ROWS) && (c>=0 && c<NUM_COLS));
     }
     public int countBombs(int row, int col)
     {
@@ -149,18 +156,19 @@ public class MSButton
         {
             for(int b=-1;b<=1;b++)
             {
-                if(bombs.contains(buttons[row+a][col+b]) && isValid(row,col))
+                if(isValid(r+a,c+b) && bombs.contains(buttons[r+a][c+b]))
                 {
                     numBombs++;
                 }
             }
         }
-        if(bombs.contains(buttons[row][col]))
+        if(bombs.contains(buttons[r][c]))
         {
             numBombs--;
         }
         return numBombs;
     }
+
 }
 
 
