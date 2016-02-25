@@ -2,8 +2,9 @@
 
 import de.bezier.guido.*;
 //Declare and initialize NUM_ROWS and NUM_COLS = 20
-private final static int  NUM_ROWS = 10;
-private final static int  NUM_COLS = 10;
+private final static int  NUM_ROWS = 20;
+private final static int  NUM_COLS = 20;
+public boolean losing = false;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> bombs= new ArrayList <MSButton>(); //ArrayList of just the minesweeper buttons that are mined
 void setup ()
@@ -41,28 +42,46 @@ public void setBombs()
 public void draw ()
 {
     background( 0 );
-    System.out.println(isWon());
     if(isWon())
         displayWinningMessage();
 }
 public boolean isWon()
 {
-    for(int i = 0; i < bombs.size();i++)
+    for(int i = 0; i < NUM_ROWS; i++)
     {
-        if(bombs.get(i).isMarked()==false)
-        {
-            return false;
-        }
+        for(int j = 0; j < NUM_COLS; j++)
+            if(!bombs.contains(buttons[i][j]) && !buttons[i][j].isClicked())
+                return false;
     }
     return true;
 }
 public void displayLosingMessage()
 {
     //your code here
+    buttons[9][6].setLabel("Y");
+    buttons[9][7].setLabel("O");
+    buttons[9][8].setLabel("U");
+    buttons[9][9].setLabel(" ");
+    buttons[9][10].setLabel("L");
+    buttons[9][11].setLabel("O");
+    buttons[9][12].setLabel("S");
+    buttons[9][13].setLabel("E");
+    for (int i =0; i < bombs.size (); i++) 
+    {
+        bombs.get(i).marked = false;
+        bombs.get(i).clicked = true;
+  }
 }
 public void displayWinningMessage()
 {
     //your code here
+    buttons[9][6].setLabel("Y");
+    buttons[9][7].setLabel("O");
+    buttons[9][8].setLabel("U");
+    buttons[9][9].setLabel(" ");
+    buttons[9][10].setLabel("W");
+    buttons[9][11].setLabel("I");
+    buttons[9][12].setLabel("N");
 }
 
 public class MSButton
@@ -71,7 +90,7 @@ public class MSButton
     private float x,y, width, height;
     private boolean clicked, marked;
     private String label;
-    
+    private boolean unsure;
     public MSButton ( int rr, int cc )
     {
         width = 400/NUM_COLS;
@@ -82,6 +101,7 @@ public class MSButton
         y = r*height;
         label = "";
         marked = clicked = false;
+        unsure = false;
         Interactive.add( this ); // register it with the manager
     }
     public boolean isMarked()
@@ -96,32 +116,40 @@ public class MSButton
     
     public void mousePressed () 
     {
-        clicked = true;
-        if(mouseButton == RIGHT)
+        if(losing == false)
         {
-            marked = !marked;
-        }
-        else if(bombs.contains(this))
-        {
-            displayLosingMessage();
-        }
-        else if(countBombs(r,c)>0)
-        {
-            setLabel(str(countBombs(r,c)));
-        }
-        else
-        {
-            for(int row =-1;row <=1;row++)
-           {
-                for(int col = -1; col<=1;col++)
-                {
-                     if(isValid(r+row,c+col)&& buttons[r+row][c+col].isClicked() == false)
+            clicked = true; 
+            if(mouseButton == RIGHT)
+            {
+                marked = !marked;
+            }
+            else if((mouseButton == RIGHT && keyPressed == true) && key == 'a')
+            {
+                unsure = !unsure;
+            }
+            else if(bombs.contains(this))
+            {
+                losing = true;
+                displayLosingMessage();
+            }
+            else if(countBombs(r,c)>0)
+            {
+                setLabel(str(countBombs(r,c)));
+            }
+            else
+            {
+                for(int row =-1;row <=1;row++)
+               {
+                    for(int col = -1; col<=1;col++)
                     {
-                        if(!(row==0&&col ==0))
-                        buttons[r+row][c+col].mousePressed();
-                    }
-                }   
-           }
+                         if(isValid(r+row,c+col)&& buttons[r+row][c+col].isClicked() == false)
+                        {
+                            if(!(row==0&&col ==0))
+                            buttons[r+row][c+col].mousePressed();
+                        }
+                    }   
+               }
+            }
         }
         //your code here
     }
@@ -134,6 +162,8 @@ public class MSButton
             fill(255,0,0);
         else if(clicked)
             fill( 200 );
+        else if(unsure)
+            fill(0,0,255);
         else 
             fill( 100 );
 
@@ -171,5 +201,7 @@ public class MSButton
 
 }
 
-
+// make an unsure button
+// make it so it doesn't reveal what was below when you unclick it
+//make it so you can't die on the first click
 
