@@ -5,6 +5,7 @@ import de.bezier.guido.*;
 private final static int  NUM_ROWS = 20;
 private final static int  NUM_COLS = 20;
 public boolean losing = false;
+public boolean restart = false;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> bombs= new ArrayList <MSButton>(); //ArrayList of just the minesweeper buttons that are mined
 void setup ()
@@ -24,9 +25,16 @@ void setup ()
             buttons[a][b]=new MSButton(a,b);
         }
     }
-    for(int c=0;c<((int)(Math.random()*10))+NUM_COLS;c++)
+    for(int c=0;c<((int)(Math.random()*30))+NUM_COLS;c++)
     {
         setBombs();
+    }
+}
+public void keyPressed()
+{
+    if (key == 'r')
+    {
+        restart = true;
     }
 }
 public void setBombs()
@@ -44,6 +52,12 @@ public void draw ()
     background( 0 );
     if(isWon())
         displayWinningMessage();
+    keyPressed();
+    if(restart == true)
+    {
+        redraw();
+        restart =false;
+    }
 }
 public boolean isWon()
 {
@@ -123,7 +137,7 @@ public class MSButton
             {
                 marked = !marked;
             }
-            else if((mouseButton == RIGHT && keyPressed == true) && key == 'a')
+            else if(keyPressed)
             {
                 unsure = !unsure;
             }
@@ -204,4 +218,4 @@ public class MSButton
 // make an unsure button
 // make it so it doesn't reveal what was below when you unclick it
 //make it so you can't die on the first click
-
+//make a restart button
