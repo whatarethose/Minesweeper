@@ -1,11 +1,8 @@
-
-
 import de.bezier.guido.*;
 //Declare and initialize NUM_ROWS and NUM_COLS = 20
 private final static int  NUM_ROWS = 20;
 private final static int  NUM_COLS = 20;
-public boolean losing = false;
-public boolean restart = false;
+public boolean gameOver = false;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> bombs= new ArrayList <MSButton>(); //ArrayList of just the minesweeper buttons that are mined
 void setup ()
@@ -25,16 +22,9 @@ void setup ()
             buttons[a][b]=new MSButton(a,b);
         }
     }
-    for(int c=0;c<((int)(Math.random()*30))+NUM_COLS;c++)
+    for(int c=0;c<((int)(Math.random()*50))+NUM_COLS;c++)
     {
         setBombs();
-    }
-}
-public void keyPressed()
-{
-    if (key == 'r')
-    {
-        restart = true;
     }
 }
 public void setBombs()
@@ -52,7 +42,6 @@ public void draw ()
     background( 0 );
     if(isWon())
         displayWinningMessage();
-    keyPressed();
     if(restart == true)
     {
         redraw();
@@ -72,6 +61,7 @@ public boolean isWon()
 public void displayLosingMessage()
 {
     //your code here
+    gameOver = true;
     buttons[9][6].setLabel("Y");
     buttons[9][7].setLabel("O");
     buttons[9][8].setLabel("U");
@@ -97,7 +87,22 @@ public void displayWinningMessage()
     buttons[9][11].setLabel("I");
     buttons[9][12].setLabel("N");
 }
-
+public void keyPressed()
+    {
+        if(key == 'r' && gameOver)
+        {
+            gameOver = false;
+            for(int r=0; r<NUM_ROWS;r++)
+                for(int c=0; c<NUM_COLS;c++)
+                {
+                    bombs.remove(buttons[r][c]);
+                    buttons[r][c].marked=false;
+                    buttons[r][c].clicked=false;
+                    buttons[r][c].setLabel(" ");
+                }
+            setBombs(); 
+        }
+    }
 public class MSButton
 {
     private int r, c;
@@ -130,20 +135,19 @@ public class MSButton
     
     public void mousePressed () 
     {
-        if(losing == false)
-        {
+        if(gameOver == true)return;
             clicked = true; 
             if(mouseButton == RIGHT)
             {
                 marked = !marked;
             }
-            else if(keyPressed)
+            else if(1 == 0)
             {
                 unsure = !unsure;
             }
             else if(bombs.contains(this))
             {
-                losing = true;
+                gameOver = true;
                 displayLosingMessage();
             }
             else if(countBombs(r,c)>0)
@@ -162,12 +166,10 @@ public class MSButton
                             buttons[r+row][c+col].mousePressed();
                         }
                     }   
-               }
+               }       
             }
-        }
         //your code here
     }
-
     public void draw () 
     {    
         if (marked)
