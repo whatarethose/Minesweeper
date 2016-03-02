@@ -3,6 +3,7 @@ import de.bezier.guido.*;
 private final static int  NUM_ROWS = 20;
 private final static int  NUM_COLS = 20;
 public boolean gameOver = false;
+public boolean firstClick = true;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> bombs= new ArrayList <MSButton>(); //ArrayList of just the minesweeper buttons that are mined
 void setup ()
@@ -22,7 +23,7 @@ void setup ()
             buttons[a][b]=new MSButton(a,b);
         }
     }
-    for(int c=0;c<((int)(Math.random()*50))+NUM_COLS;c++)
+    for(int c=0;c<((int)(Math.random()*50))+NUM_COLS+20;c++)
     {
         setBombs();
     }
@@ -41,11 +42,9 @@ public void draw ()
 {
     background( 0 );
     if(isWon())
-        displayWinningMessage();
-    if(restart == true)
     {
-        redraw();
-        restart =false;
+        displayWinningMessage();
+        gameOver= true;
     }
 }
 public boolean isWon()
@@ -87,20 +86,29 @@ public void displayWinningMessage()
     buttons[9][11].setLabel("I");
     buttons[9][12].setLabel("N");
 }
+public void reset()
+{
+    gameOver = false;
+        for(int r=0; r<NUM_ROWS;r++)
+        {
+            for(int c=0; c<NUM_COLS;c++)
+            {
+                bombs.remove(buttons[r][c]);
+                buttons[r][c].marked=false;
+                buttons[r][c].clicked=false;
+                buttons[r][c].setLabel(" ");
+            }
+        }
+        for(int c=0;c<((int)(Math.random()*50))+NUM_COLS+20;c++)
+        {
+            setBombs();
+        } 
+}
 public void keyPressed()
     {
         if(key == 'r' && gameOver)
         {
-            gameOver = false;
-            for(int r=0; r<NUM_ROWS;r++)
-                for(int c=0; c<NUM_COLS;c++)
-                {
-                    bombs.remove(buttons[r][c]);
-                    buttons[r][c].marked=false;
-                    buttons[r][c].clicked=false;
-                    buttons[r][c].setLabel(" ");
-                }
-            setBombs(); 
+            reset();
         }
     }
 public class MSButton
@@ -136,14 +144,15 @@ public class MSButton
     public void mousePressed () 
     {
         if(gameOver == true)return;
+            if(mouseButton == LEFT)
             clicked = true; 
-            if(mouseButton == RIGHT)
-            {
-                marked = !marked;
-            }
-            else if(1 == 0)
-            {
-                unsure = !unsure;
+            if (mouseButton == RIGHT){
+                if(keyPressed)
+                    unsure= !unsure;
+                else
+                {
+                    marked= !marked;
+                }
             }
             else if(bombs.contains(this))
             {
@@ -168,7 +177,6 @@ public class MSButton
                     }   
                }       
             }
-        //your code here
     }
     public void draw () 
     {    
@@ -182,7 +190,6 @@ public class MSButton
             fill(0,0,255);
         else 
             fill( 100 );
-
         rect(x, y, width, height);
         fill(0);
         text(label,x+width/2,y+height/2);
@@ -216,8 +223,5 @@ public class MSButton
     }
 
 }
-
-// make an unsure button
-// make it so it doesn't reveal what was below when you unclick it
+//BUGS
 //make it so you can't die on the first click
-//make a restart button
