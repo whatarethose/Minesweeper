@@ -89,6 +89,7 @@ public void displayWinningMessage()
 public void reset()
 {
     gameOver = false;
+    firstClick = true;
         for(int r=0; r<NUM_ROWS;r++)
         {
             for(int c=0; c<NUM_COLS;c++)
@@ -96,6 +97,7 @@ public void reset()
                 bombs.remove(buttons[r][c]);
                 buttons[r][c].marked=false;
                 buttons[r][c].clicked=false;
+                buttons[r][c].unsure=false;
                 buttons[r][c].setLabel(" ");
             }
         }
@@ -106,7 +108,7 @@ public void reset()
 }
 public void keyPressed()
     {
-        if(key == 'r' && gameOver)
+        if(key == 'r')
         {
             reset();
         }
@@ -143,7 +145,12 @@ public class MSButton
     
     public void mousePressed () 
     {
-        if(gameOver == true)return;
+        if(gameOver)return;
+            if(firstClick)
+            {
+                
+                firstClick = false;
+            }
             if(mouseButton == LEFT)
             clicked = true; 
             if (mouseButton == RIGHT){
